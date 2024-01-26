@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ ${DIB_DEBUG_TRACE:-1} -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+export SLE_EXTRAS_PATH="$TMP_MOUNT_PATH/tmp/sle-extras"
+mkdir -p $SLE_EXTRAS_PATH
+
+for file in common-defaults img-defaults ; do
+    cp $_LIB/$file $SLE_EXTRAS_PATH
+done
+

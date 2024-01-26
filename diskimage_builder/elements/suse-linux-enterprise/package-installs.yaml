@@ -1,0 +1,10 @@
+# sudo is not included by default.
+sudo:
+# Replace kernel-default-base with kernel-default to get iscsi support
+#kernel-default:
+# install kernel package needed by dkms.
+kernel-devel:
+# lsb-release is not included by default.
+lsb-release:
+# Compatibility for zypper element scripts using deprecated mkinitrd
+dracut-mkinitrd-deprecated:

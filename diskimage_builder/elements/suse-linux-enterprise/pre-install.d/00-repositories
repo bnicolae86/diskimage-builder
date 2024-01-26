@@ -1,0 +1,32 @@
+#!/bin/bash
+
+if [ ${DIB_DEBUG_TRACE:-0} -gt 1 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+[ -n "$ARCH" ]
+
+if [ 'amd64' = "$ARCH" ] ; then
+    ARCH="x86_64"
+fi
+
+if ! [ 'x86_64' = "$ARCH" ] ; then
+    echo "Only x86_64 images are currently available but ARCH is set to $ARCH."
+    exit 1
+fi
+
+RMT_IP_ADDR=${RMT_IP_ADDR:-192.168.0.1}
+
+zypper ar https://$RMT_IP_ADDR/repo/SUSE/Products/SLE-Product-SLES/15-SP5/x86_64/product/ SLE-Product-SLES
+zypper ar https://$RMT_IP_ADDR/repo/SUSE/Products/SLE-Module-Basesystem/15-SP5/x86_64/product/ SLE-Module-Basesystem
+zypper ar https://$RMT_IP_ADDR/repo/SUSE/Products/SLE-Module-Server-Applications/15-SP5/x86_64/product/ SLE-Module-Server-Applications
+zypper ar https://$RMT_IP_ADDR/repo/SUSE/Updates/SLE-Product-SLES/15-SP5/x86_64/update/ SLE-Product-SLES-update
+zypper ar https://$RMT_IP_ADDR/repo/SUSE/Updates/SLE-Module-Basesystem/15-SP5/x86_64/update/ SLE-Module-Basesystem-update
+zypper ar https://$RMT_IP_ADDR/repo/SUSE/Updates/SLE-Module-Server-Applications/15-SP5/x86_64/update/ SLE-Module-Server-Applications-update
+
+cd /etc/pki/trust/anchors/
+wget https://$RMT_IP_ADDR/rmt.crt --no-check-certificate
+update-ca-certificates
+
