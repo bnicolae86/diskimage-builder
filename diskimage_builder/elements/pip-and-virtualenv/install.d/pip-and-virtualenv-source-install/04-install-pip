@@ -27,7 +27,7 @@ function install_python2_pip {
 # force things to happen so our assumptions hold
 pip_args="-U --force-reinstall"
 
-if [[ $DISTRO_NAME =~ (opensuse|fedora|centos|centos7|rhel|rhel7) ]]; then
+if [[ $DISTRO_NAME =~ (opensuse|sle|fedora|centos|centos7|rhel|rhel7) ]]; then
 
     # Default packages
     _do_py3=0
@@ -99,6 +99,19 @@ if [[ $DISTRO_NAME =~ (opensuse|fedora|centos|centos7|rhel|rhel7) ]]; then
                     ;;
             esac
             ;;
+        sle)
+            case "$DIB_RELEASE" in
+                15*)
+                    _do_py3=1
+                    _clear_old_files=1
+                    # python*-six gets dragged in, and then is a
+                    # distutils package and won't uninstall.  put it
+                    # here so it gets cleaned.
+                    packages="python2-virtualenv python2-pip python2-setuptools python2-six"
+                    packages+=" python3-virtualenv python3-pip python3-setuptools python3-six"
+                    ;;
+            esac
+            ;;
     esac
 
     # GENERAL WARNING : mixing packaged python libraries with
@@ -111,6 +124,8 @@ if [[ $DISTRO_NAME =~ (opensuse|fedora|centos|centos7|rhel|rhel7) ]]; then
     # overwrites the pip installed version with the packaged version,
     # leading to all sorts of weird version issues.
     if [[ $DISTRO_NAME = opensuse ]]; then
+        zypper -n install $packages
+    elif [[ $DISTRO_NAME = sle ]]; then
         zypper -n install $packages
     else
         ${YUM:-yum} ${_extra_repo} install -y $packages
@@ -191,6 +206,9 @@ if [[ $DISTRO_NAME =~ (opensuse|fedora|centos|centos7|rhel|rhel7) ]]; then
         if [[ $DISTRO_NAME != opensuse ]]; then
             dnf reinstall -y python3-setuptools
         fi
+        if [[ $DISTRO_NAME != sle ]]; then
+            dnf reinstall -y python3-setuptools
+        fi
     fi
 
     # now install latest virtualenv.  it vendors stuff it needs so
@@ -226,6 +244,15 @@ if [[ $DISTRO_NAME =~ (opensuse|fedora|centos|centos7|rhel|rhel7) ]]; then
     # versions.
 
     if [[ $DISTRO_NAME = opensuse ]]; then
+        for pkg in virtualenv pip setuptools; do
+            cat - >> /etc/zypp/locks <<EOF
+type: package
+match_type: glob
+case_sensitive: on
+solvable_name: python-$pkg
+EOF
+        done
+    elif [[ $DISTRO_NAME = sle ]]; then
         for pkg in virtualenv pip setuptools; do
             cat - >> /etc/zypp/locks <<EOF
 type: package
