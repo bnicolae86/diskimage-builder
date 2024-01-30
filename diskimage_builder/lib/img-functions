@@ -219,6 +219,9 @@ function select_boot_kernel_initrd () {
     elif [[ $DISTRO_NAME = opensuse ]]; then
         KERNEL=$(basename $(readlink -e $BOOTDIR/vmlinuz))
         RAMDISK=$(basename $(readlink -e $BOOTDIR/initrd))
+    elif [[ $DISTRO_NAME = sle ]]; then
+        KERNEL=$(basename $(readlink -e $BOOTDIR/vmlinuz))
+        RAMDISK=$(basename $(readlink -e $BOOTDIR/initrd))
     else
         echo "ERROR: Unable to detect operating system"
         exit 1
