@@ -6,12 +6,6 @@ fi
 set -eu
 set -o pipefail
 
-[ -n "$ARCH" ]
-
-if [ 'amd64' = "$ARCH" ] ; then
-    ARCH="x86_64"
-fi
-
 zypper -n in kernel-default
 zypper -n rm kernel-default-base
 
