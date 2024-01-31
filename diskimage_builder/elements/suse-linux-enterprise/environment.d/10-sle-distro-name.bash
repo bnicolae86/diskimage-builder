@@ -9,3 +9,4 @@ case ${DIB_RELEASE} in
 esac
 
 export DIB_DISTRIBUTION_MIRROR=${DIB_DISTRIBUTION_MIRROR:-https://download.suse.com}
+
