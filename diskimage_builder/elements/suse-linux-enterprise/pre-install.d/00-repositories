@@ -8,22 +8,26 @@ set -o pipefail
 
 case "${REG_METHOD:-}" in
     rmt)
+	RMT_IP_ADDR=${RMT_IP_ADDR:-192.168.0.1}
 	cd /etc/pki/trust/anchors/
 	wget https://$RMT_IP_ADDR/rmt.crt --no-check-certificate
 	update-ca-certificates
-	RMT_IP_ADDR=${RMT_IP_ADDR:-192.168.0.1}
-	zypper ar https://$RMT_IP_ADDR/repo/SUSE/Products/SLE-Product-SLES/15-SP5/x86_64/product/ SLE-Product-SLES
-	zypper ar https://$RMT_IP_ADDR/repo/SUSE/Products/SLE-Module-Basesystem/15-SP5/x86_64/product/ SLE-Module-Basesystem
-	zypper ar https://$RMT_IP_ADDR/repo/SUSE/Products/SLE-Module-Server-Applications/15-SP5/x86_64/product/ SLE-Module-Server-Applications
-	zypper ar https://$RMT_IP_ADDR/repo/SUSE/Products/SLE-Module-Python3/15-SP5/x86_64/product/ SLE-Module-Python3
-	zypper ar https://$RMT_IP_ADDR/repo/SUSE/Products/SLE-Module-Public-Cloud/15-SP5/x86_64/product/ SLE-Module-Public-Cloud
-	zypper ar https://$RMT_IP_ADDR/repo/SUSE/Updates/SLE-Product-SLES/15-SP5/x86_64/update/ SLE-Product-SLES-update
-	zypper ar https://$RMT_IP_ADDR/repo/SUSE/Updates/SLE-Module-Basesystem/15-SP5/x86_64/update/ SLE-Module-Basesystem-update
-	zypper ar https://$RMT_IP_ADDR/repo/SUSE/Updates/SLE-Module-Server-Applications/15-SP5/x86_64/update/ SLE-Module-Server-Applications-update
-	zypper ar https://$RMT_IP_ADDR/repo/SUSE/Updates/SLE-Module-Python3/15-SP5/x86_64/update/ SLE-Module-Python3-udpate
-	zypper ar https://$RMT_IP_ADDR/repo/SUSE/Updates/SLE-Module-Public-Cloud/15-SP5/x86_64/update/ SLE-Module-Public-Cloud-update
+	cd /tmp/
+	RMT_SERVER=${RMT_SERVER:-rmt.local}
+	RMT_CERT_FINGERPRINT=${RMT_CERT_FINGERPRINT:-AA:AA:AA}
+	echo "$RMT_IP_ADDR $RMT_SERVER" >> /etc/hosts
+	cat /etc/hosts
+	curl http://$RMT_SERVER/tools/rmt-client-setup --output rmt-client-setup
+	chmod +x rmt-client-setup
+	./rmt-client-setup --yes --fingerprint $RMT_CERT_FINGERPRINT https://$RMT_SERVER/
+	suseconnect -p sle-module-python3/15.5/x86_64
+        suseconnect -p sle-module-public-cloud/15.5/x86_64
         ;;
     scc)
+	REG_CODE=${REG_CODE:-123456789}
+	SUSEConnect -r $REG_CODE
+	suseconnect -p sle-module-python3/15.5/x86_64
+	suseconnect -p sle-module-public-cloud/15.5/x86_64
         ;;
 esac
 

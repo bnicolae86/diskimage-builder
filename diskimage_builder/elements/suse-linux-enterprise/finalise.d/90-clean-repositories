@@ -6,16 +6,15 @@ fi
 set -eu
 set -o pipefail
 
-zypper rr SLE-Product-SLES
-zypper rr SLE-Module-Basesystem
-zypper rr SLE-Module-Server-Applications
-zypper rr SLE-Module-Public-Cloud
-zypper rr SLE-Module-Python3
-zypper rr SLE-Product-SLES-update
-zypper rr SLE-Module-Basesystem-update
-zypper rr SLE-Module-Server-Applications-update
-zypper rr SLE-Module-Python3-udpate
-zypper rr SLE-Module-Public-Cloud-udpate
-rm -rf /etc/pki/trust/anchors/rmt.crt
-update-ca-certificates
-
+case "${REG_METHOD:-}" in
+    rmt)
+	SUSEConnect -d
+        SUSEConnect --cleanup
+	rm -rf /etc/pki/trust/anchors/rmt.crt
+	update-ca-certificates
+        ;;
+    scc)
+        SUSEConnect -d
+	SUSEConnect --cleanup
+        ;;
+esac
