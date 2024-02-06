@@ -12,6 +12,7 @@ case "${REG_METHOD:-}" in
         SUSEConnect --cleanup
 	rm -rf /etc/pki/trust/anchors/rmt.crt
 	update-ca-certificates
+	sed -i '/'$RMT_SERVER'/d' /etc/hosts
         ;;
     scc)
         SUSEConnect -d
