@@ -18,7 +18,7 @@ case "${REG_METHOD:-}" in
 	update-ca-certificates
 	cd /tmp/
 	echo "$RMT_IP_ADDR $RMT_SERVER" >> /etc/hosts
-	curl http://$RMT_SERVER/tools/rmt-client-setup --output rmt-client-setup
+	wget http://$RMT_SERVER/tools/rmt-client-setup
 	chmod +x rmt-client-setup
 	./rmt-client-setup --yes --fingerprint $RMT_CERT_FINGERPRINT https://$RMT_SERVER/
 	readarray -d , -t strarr <<< "$REPOS_LIST"

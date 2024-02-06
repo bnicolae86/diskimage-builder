@@ -11,4 +11,3 @@ set -o pipefail
 if [ ${DIB_AVOID_PACKAGES_UPDATE} -eq 0 ]; then
     install-packages -u
 fi
-
