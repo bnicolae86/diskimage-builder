@@ -47,7 +47,11 @@ eval set -- "$TEMP"
 
 while true ; do
     case "$1" in
-        -u) run_zypper dist-upgrade --no-recommends; exit 0;;
+        -u) 
+	    run_zypper al kernel-default-base
+	    run_zypper dist-upgrade --no-recommends
+	    run_zypper rl kernel-default-base
+	    exit 0;;
         -e) ACTION="remove"; ACTION_ARGS="--clean-deps"; shift;;
         -d) ACTION_ARGS="${ACTION_ARGS} --download-only"; shift;;
         -m) MAP_ELEMENT=$2; shift 2;;
