@@ -8,9 +8,7 @@ fi
 set -eu
 set -o pipefail
 
-#if [ ${DISTRO_NAME} != "sle" ]; then
-    if [ ${DIB_AVOID_PACKAGES_UPDATE} -eq 0 ]; then
-        install-packages -u
-    fi
-#fi
+if [ ${DIB_AVOID_PACKAGES_UPDATE} -eq 0 ]; then
+    install-packages -u
+fi
 
