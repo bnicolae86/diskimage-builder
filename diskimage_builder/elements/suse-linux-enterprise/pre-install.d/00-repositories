@@ -10,33 +10,33 @@ REPOS_LIST=${REPOS_LIST:-sle-module-python3}
 
 case "${REG_METHOD:-}" in
     rmt)
-	RMT_IP_ADDR=${RMT_IP_ADDR:-192.168.0.1}
-	RMT_SERVER=${RMT_SERVER:-rmt.local}
+        RMT_IP_ADDR=${RMT_IP_ADDR:-192.168.0.1}
+        RMT_SERVER=${RMT_SERVER:-rmt.local}
         RMT_CERT_FINGERPRINT=${RMT_CERT_FINGERPRINT:-AA:AA:AA}
-	cd /etc/pki/trust/anchors/
-	wget https://$RMT_IP_ADDR/rmt.crt --no-check-certificate
-	update-ca-certificates
-	cd /tmp/
-	echo "$RMT_IP_ADDR $RMT_SERVER" >> /etc/hosts
-	wget http://$RMT_SERVER/tools/rmt-client-setup
-	chmod +x rmt-client-setup
-	./rmt-client-setup --yes --fingerprint $RMT_CERT_FINGERPRINT https://$RMT_SERVER/
-	readarray -d , -t strarr <<< "$REPOS_LIST"
-	for (( n=0; n < ${#strarr[*]}; n++))
-        do
-	    repo=$(echo ${strarr[n]} | tr -d ' ')
-            suseconnect -p $repo/$DIB_RELEASE/x86_64
-        done
-        ;;
-    scc)
-	REG_CODE=${REG_CODE:-123456789}
-	SUSEConnect -r $REG_CODE
+        cd /etc/pki/trust/anchors/
+        wget https://$RMT_IP_ADDR/rmt.crt --no-check-certificate
+        update-ca-certificates
+        cd /tmp/
+        echo "$RMT_IP_ADDR $RMT_SERVER" >> /etc/hosts
+        wget http://$RMT_SERVER/tools/rmt-client-setup
+        chmod +x rmt-client-setup
+        ./rmt-client-setup --yes --fingerprint $RMT_CERT_FINGERPRINT https://$RMT_SERVER/
         readarray -d , -t strarr <<< "$REPOS_LIST"
         for (( n=0; n < ${#strarr[*]}; n++))
         do
             repo=$(echo ${strarr[n]} | tr -d ' ')
             suseconnect -p $repo/$DIB_RELEASE/x86_64
         done
-	;;
+        ;;
+    scc)
+        REG_CODE=${REG_CODE:-123456789}
+        SUSEConnect -r $REG_CODE
+        readarray -d , -t strarr <<< "$REPOS_LIST"
+        for (( n=0; n < ${#strarr[*]}; n++))
+        do
+            repo=$(echo ${strarr[n]} | tr -d ' ')
+            suseconnect -p $repo/$DIB_RELEASE/x86_64
+        done
+        ;;
 esac
 

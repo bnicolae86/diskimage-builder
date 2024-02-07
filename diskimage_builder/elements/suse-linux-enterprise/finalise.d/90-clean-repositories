@@ -8,14 +8,15 @@ set -o pipefail
 
 case "${REG_METHOD:-}" in
     rmt)
-	SUSEConnect -d
+        SUSEConnect -d
         SUSEConnect --cleanup
-	rm -rf /etc/pki/trust/anchors/rmt.crt
-	update-ca-certificates
-	sed -i '/'$RMT_SERVER'/d' /etc/hosts
+        rm -rf /etc/pki/trust/anchors/rmt.crt
+        update-ca-certificates
+        sed -i '/'$RMT_SERVER'/d' /etc/hosts
         ;;
     scc)
         SUSEConnect -d
-	SUSEConnect --cleanup
+        SUSEConnect --cleanup
         ;;
 esac
+
