@@ -6,3 +6,4 @@ kernel-devel:
 lsb-release:
 # Compatibility for zypper element scripts using deprecated mkinitrd
 dracut-mkinitrd-deprecated:
+squashfs:
