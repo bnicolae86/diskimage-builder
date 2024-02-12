@@ -8,5 +8,5 @@ set -o pipefail
 
 if [ $DISTRO_NAME = 'opensuse' ] || [ $DISTRO_NAME = 'sle' ] ; then
     # workaround for https://bugzilla.novell.com/show_bug.cgi?id=859493
-    rm -f /dev/mapper/loop*_part1
+    rm -f /dev/mapper/loop*p*
 fi
