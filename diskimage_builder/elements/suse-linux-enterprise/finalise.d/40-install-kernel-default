@@ -7,6 +7,6 @@ set -eu
 set -o pipefail
 
 # Replace kernel-default-base with kernel-default to provide iscsi modules
-zypper -n in kernel-default
+zypper -n in kernel-default kernel-firmware-all
 zypper -n rm kernel-default-base
 
