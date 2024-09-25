@@ -3,7 +3,7 @@ export DIB_RELEASE=${DIB_RELEASE:-15.6}
 export EFI_BOOT_DIR="EFI/BOOT"
 export DIB_INIT_SYSTEM=systemd
 case ${DIB_RELEASE} in
-    15.5) export SLE_REPO_DIR=SLE_${DIB_RELEASE} ;;
+    15.6) export SLE_REPO_DIR=SLE_${DIB_RELEASE} ;;
     *) echo "Unsupported SLE release: ${DIB_RELEASE}"; exit 1 ;;
 esac
 
