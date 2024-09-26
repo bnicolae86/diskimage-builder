@@ -4,4 +4,5 @@ sudo:
 kernel-devel:
 # lsb-release is not included by default.
 lsb-release:
+dracut:
 squashfs:
