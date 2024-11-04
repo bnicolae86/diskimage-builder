@@ -20,8 +20,8 @@ fi
 
 # Set some image defaults
 SLE_IMAGE_BASEDIR=SLE
-SLE_IMAGE_FILE=SLES15-SP5-Minimal-VM
-SLE_IMAGE_FLAVOR=Cloud-QU1
+SLE_IMAGE_FILE=${SLE_IMAGE_FILE=:-SLES15-SP5-Minimal-VM}
+SLE_IMAGE_FLAVOR=${SLE_IMAGE_FLAVOR:-Cloud-QU1}
 SLE_IMAGE_EXT=qcow2
 DIB_CLOUD_IMAGES=${DIB_CLOUD_IMAGES:-https://test.site}
 BASE_IMAGE_FILE=${BASE_IMAGE_FILE:-${SLE_IMAGE_FILE}.${ARCH}-${SLE_IMAGE_FLAVOR}.${SLE_IMAGE_EXT}}
@@ -39,7 +39,7 @@ if [ -n "$DIB_OFFLINE" -a -f "$CACHED_FILE" ] ; then
     # between image tarball and host OS)
     sudo tar -C $TARGET_ROOT --numeric-owner -xf $CACHED_FILE
 else
-    echo "Fetching Base Image ${BASE_IMAGE_FILE}"
+    echo "Fetching Base Image ${BASE_IMAGE_FILE} from $DIB_IMAGE_CACHE"
     $TMP_HOOKS_PATH/bin/cache-url $DIB_CLOUD_IMAGES/$SHA256SUMS_FILE $CACHED_SHA256SUMS_FILE
     $TMP_HOOKS_PATH/bin/extract-image $BASE_IMAGE_FILE $BASE_IMAGE_FILE.tgz $DIB_CLOUD_IMAGES/$BASE_IMAGE_FILE $CACHED_FILE
     pushd $DIB_IMAGE_CACHE

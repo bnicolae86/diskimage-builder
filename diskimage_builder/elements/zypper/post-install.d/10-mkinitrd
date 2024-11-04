@@ -18,7 +18,8 @@ echo "rootfstype=${DIB_ROOT_FSTYPE}" > /etc/sysconfig/initrd
 #       Let's see which error occurs.
 # openSuse mkinitrd requires a valid root device be in fstab.
 ##sed -i 's/vda1/sda1/' /etc/fstab
-mkinitrd -A -B
+#mkinitrd -A -B
+dracut -f --no-kernel
 
 # And cleanup again
 rm /etc/sysconfig/initrd
