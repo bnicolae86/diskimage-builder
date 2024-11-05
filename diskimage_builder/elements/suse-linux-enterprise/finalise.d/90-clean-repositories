@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ ${DIB_DEBUG_TRACE:-0} -gt 1 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+case "${REG_METHOD:-}" in
+    rmt)
+        SUSEConnect -d
+        SUSEConnect --cleanup
+        rm -rf /etc/pki/trust/anchors/rmt.crt
+        update-ca-certificates
+        sed -i '/'$RMT_SERVER'/d' /etc/hosts
+        ;;
+    scc)
+        SUSEConnect -d
+        SUSEConnect --cleanup
+        ;;
+esac
+

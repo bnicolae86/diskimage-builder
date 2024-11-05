@@ -47,8 +47,15 @@ eval set -- "$TEMP"
 
 while true ; do
     case "$1" in
-        -u) run_zypper dist-upgrade --no-recommends; exit 0;;
-        -e) ACTION="remove"; ACTION_ARGS="--clean-deps"; shift;;
+        -u) 
+	    # Lock package can't be updated during install.d
+	    # These packages will be updated automatically later during the
+	    # build process
+	    run_zypper al kernel-default-base grub2 grub2-x86_64-efi
+	    run_zypper dist-upgrade --no-recommends
+	    run_zypper rl kernel-default-base grub2 grub2-x86_64-efi
+	    exit 0;;
+	-e) ACTION="remove"; ACTION_ARGS="--clean-deps"; shift;;
         -d) ACTION_ARGS="${ACTION_ARGS} --download-only"; shift;;
         -m) MAP_ELEMENT=$2; shift 2;;
         -h) show_options;;
