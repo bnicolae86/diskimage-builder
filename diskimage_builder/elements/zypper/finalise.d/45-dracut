@@ -1,0 +1,97 @@
+#!/bin/bash
+# The base image created by kiwi does not contain an initrd so create one
+# here.
+
+if [ ${DIB_DEBUG_TRACE:-0} -gt 0 ]; then
+    set -x
+fi
+set -eu
+set -o pipefail
+
+boot_dir="/boot"
+kernels=""
+targets=""
+
+kernel_version_from_image() {
+    local dir="${1%/*}/"
+    [[ $dir != "$1" ]] || dir=""
+    local kernel_image="$1" kernel_image_gz="${dir}vmlinux-${1#*-}.gz"
+    echo kernel_image_gz="'$kernel_image_gz'" >&2
+    if get_kernel_version "$kernel_image" 2> /dev/null; then
+        return
+    fi
+    # As a last resort, try vmlinux-$version.gz, which might be around
+    get_kernel_version "$kernel_image_gz" 2> /dev/null
+}
+
+default_kernel_images() {
+    local regex kernel_image kernel_version version_version initrd_image
+    local qf='%{NAME}-%{VERSION}-%{RELEASE}\n'
+    case "${DRACUT_ARCH:-$(uname -m)}" in
+        s390 | s390x)
+            regex='image'
+            ;;
+        ppc | ppc64)
+            regex='vmlinux'
+            ;;
+        i?86 | x86_64)
+            regex='vmlinuz'
+            ;;
+        arm*)
+            regex='[uz]Image'
+            ;;
+        aarch64 | riscv64)
+            regex='Image'
+            ;;
+        *)
+            regex='vmlinu.'
+            ;;
+    esac
+    kernel_images=""
+    initrd_images=""
+    for kernel_image in $(ls $boot_dir \
+        | sed -ne "\|^$regex\(-[0-9.]\+-[0-9]\+-[a-z0-9]\+$\)\?|p" \
+        | grep -v kdump$); do
+        # Note that we cannot check the RPM database here -- this
+        # script is itself called from within the binary kernel
+        # packages, and rpm does not allow recursive calls.
+        [ -L "$boot_dir/$kernel_image" ] && continue
+        [ "${kernel_image%%.gz}" != "$kernel_image" ] && continue
+        kernel_version=$(kernel_version_from_image \
+            $boot_dir/$kernel_image 2> /dev/null)
+        initrd_image=$(echo $kernel_image | sed -e "s|${regex}|initrd|")
+        if [ "$kernel_image" != "$initrd_image" -a \
+            -n "$kernel_version" -a \
+            -d "/lib/modules/$kernel_version" ]; then
+            kernel_images="$kernel_images $boot_dir/$kernel_image"
+            initrd_images="$initrd_images $boot_dir/$initrd_image"
+        fi
+    done
+    for kernel_image in $kernel_images; do
+        kernels="$kernels ${kernel_image#*-}"
+    done
+    for initrd_image in $initrd_images; do
+        targets="$targets $initrd_image"
+    done
+}
+
+default_kernel_images
+
+# This is to tell mkinitrd to include the right tools for the root filesystem
+# that will actually be used for the final image. This is likely something
+# different than what the chroot is currently on (which might currently be a
+# tmpfs even).
+#echo "rootfstype=${DIB_ROOT_FSTYPE}" > /etc/sysconfig/initrd
+#echo "add_dracutmodules+=\" lvm \"" > /etc/dracut.conf.d/dib.conf
+echo "filesystems+=\" ${DIB_ROOT_FSTYPE} \"" > /etc/dracut.conf.d/dib.conf
+
+# ToDo: This it not really clear to me.
+#       Let's see which error occurs.
+# openSuse mkinitrd requires a valid root device be in fstab.
+##sed -i 's/vda1/sda1/' /etc/fstab
+dracut --force --no-hostonly $targets $kernels
+
+# And cleanup again
+#rm /etc/sysconfig/initrd
+rm /etc/dracut.conf.d/dib.conf
+
