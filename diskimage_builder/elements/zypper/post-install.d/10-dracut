@@ -84,6 +84,7 @@ default_kernel_images
 #echo "rootfstype=${DIB_ROOT_FSTYPE}" > /etc/sysconfig/initrd
 #echo "add_dracutmodules+=\" lvm \"" > /etc/dracut.conf.d/dib.conf
 echo "filesystems+=\" ${DIB_ROOT_FSTYPE} \"" > /etc/dracut.conf.d/dib.conf
+echo "add_drivers+=\" ahci virtio virtio_pci virtio_blk virtio_net \"" > /etc/dracut.conf.d/10-ahci.conf
 
 # ToDo: This it not really clear to me.
 #       Let's see which error occurs.
@@ -94,4 +95,5 @@ dracut --force --no-hostonly $targets $kernels
 # And cleanup again
 #rm /etc/sysconfig/initrd
 rm /etc/dracut.conf.d/dib.conf
+rm /etc/dracut.conf.d/10-ahci.conf
 
