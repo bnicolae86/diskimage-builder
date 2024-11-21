@@ -84,16 +84,16 @@ default_kernel_images
 #echo "rootfstype=${DIB_ROOT_FSTYPE}" > /etc/sysconfig/initrd
 #echo "add_dracutmodules+=\" lvm \"" > /etc/dracut.conf.d/dib.conf
 echo "filesystems+=\" ${DIB_ROOT_FSTYPE} \"" > /etc/dracut.conf.d/dib.conf
-echo "add_drivers+=\" ahci virtio virtio_pci virtio_blk virtio_net \"" > /etc/dracut.conf.d/10-ahci.conf
+#echo "omit_dracutmodules+=\" firstboot \"" > /etc/dracut.conf.d/remove_first_boot_module.conf
 
 # ToDo: This it not really clear to me.
 #       Let's see which error occurs.
 # openSuse mkinitrd requires a valid root device be in fstab.
 ##sed -i 's/vda1/sda1/' /etc/fstab
-dracut --force --no-hostonly $targets $kernels
+dracut --force --no-hostonly -o firstboot $targets $kernels
 
 # And cleanup again
 #rm /etc/sysconfig/initrd
 rm /etc/dracut.conf.d/dib.conf
-rm /etc/dracut.conf.d/10-ahci.conf
+#rm /etc/dracut.conf.d/remove_first_boot_module.conf
 
