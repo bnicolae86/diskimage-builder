@@ -11,7 +11,7 @@ Environment Variables
 
 DIB_RELEASE
   :Required: No
-  :Default: 15-SP5
+  :Default: 15-SP6
   :Description: Set the desired SUSE Linux Enterprise release.
 
 DIB_CLOUD_IMAGES
@@ -21,7 +21,7 @@ DIB_CLOUD_IMAGES
 
 SLE_IMAGE_FILE
   :Required: Yes
-  :Default: SLES15-SP5-Minimal-VM
+  :Default: SLES15-SP6-Minimal-VM
   :Description: Part of the image filename related to the version and size.
 
 SLE_IMAGE_FLAVOR

@@ -1,5 +1,5 @@
 export DISTRO_NAME=sle
-export DIB_RELEASE=${DIB_RELEASE:-15.5}
+export DIB_RELEASE=${DIB_RELEASE:-15.6}
 export EFI_BOOT_DIR="EFI/BOOT"
 export DIB_INIT_SYSTEM=systemd
 case ${DIB_RELEASE} in
