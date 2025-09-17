@@ -1,0 +1,12 @@
+# sudo is not included by default.
+sudo:
+# install kernel package needed by dkms.
+kernel-devel:
+# lsb-release is not included by default.
+lsb-release:
+# Add squashfs support
+squashfs:
+lvm2:
+# Remove jeos-firstboot package
+jeos-firstboot:
+  uninstall: True
